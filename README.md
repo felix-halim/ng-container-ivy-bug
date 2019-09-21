@@ -1,27 +1,49 @@
-# NgContainerIvyBug
+# mat-tab inside ng-container failed to display when ivy is enabled
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.2.
+Steps to reproduce:
 
-## Development server
+$ ng --version
+...
+Angular CLI: 8.3.5
+Node: 10.16.3
+OS: darwin x64
+Angular: 8.2.7
+...
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
+$ ng new ng-container-ivy-bug --enable-ivy --minimal
+? Would you like to add Angular routing? No
+? Which stylesheet format would you like to use? CSS
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+$ cd ng-container-ivy-bug
 
-## Build
+$ npm install --save @angular/material @angular/cdk @angular/animations
++ @angular/cdk@8.2.0
++ @angular/material@8.2.0
++ @angular/animations@8.2.7
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Edit app.module.ts add BrowserAnimationsModule and MatTabsModule
 
-## Running unit tests
+Edit app.component.ts:
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+<mat-tab-group>
+  <ng-container *ngIf="title$ | async as title">
+    <mat-tab label="Title">{{ title }}</mat-tab>
+  </ng-container>
+</mat-tab-group>
 
-## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+$ ng serve
 
-## Further help
+Observe blank page at: http://localhost:4200/
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+Edit the tsconfig.app.json and disable ivy:
+
+    "enableIvy": false
+
+Kill and restart the server:
+
+$ ng serve
+
+Observe something is displayed at: http://localhost:4200/
